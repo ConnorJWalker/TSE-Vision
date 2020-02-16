@@ -1,0 +1,22 @@
+# cmake files
+cmake_install.cmake
+CMakeCache.txt
+Makefile
+CMakeFiles/
+
+# exectuable
+vision
+
+# visual studio generated files
+.vs/
+build/
+Debug/
+vision.dir/
+x64/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+
+# visual studio code generated files
+.vscode/
