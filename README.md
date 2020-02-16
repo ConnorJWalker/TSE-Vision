@@ -9,3 +9,10 @@ This will generate the necassary Cmake files need for the project as well as cre
 ```
 make
 ```
+
+### Differences from previous projects
+OpenCV uses different include directories to add it to the code. To cleanly get around this, common includes have been added to depenencies/opencv.h with a check to see the OS it is on. To add OpenCV to files add this line of code
+
+```
+#include <opencv.h>
+```
