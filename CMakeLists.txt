@@ -24,12 +24,8 @@ endif()
 
 find_package(OpenCV REQUIRED PATHS ${FIND_OPENCV_DIR} NO_DEFAULT_PATH)
 
-# Include asio and opencv headers to the preprocessor
 include_directories(OpenCV_INCLUDE_DIRS)
 include_directories(AFTER dependencies)
-
-# Required to tell asio not to try and include boost library
-add_definitions(-DASIO_STANDALONE)
 
 add_executable(vision src/main.cpp)
 
