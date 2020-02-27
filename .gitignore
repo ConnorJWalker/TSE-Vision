@@ -22,4 +22,4 @@ x64/
 .vscode/
 
 # clion generated files
-./idea
+.idea/
