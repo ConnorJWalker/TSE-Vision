@@ -20,3 +20,6 @@ x64/
 
 # visual studio code generated files
 .vscode/
+
+# clion generated files
+./idea
