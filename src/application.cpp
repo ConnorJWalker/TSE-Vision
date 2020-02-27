@@ -9,5 +9,11 @@ Application::~Application() {
 }
 
 void Application::run() {
+    while (true) {
+        camera.getNextFrame();
 
+        renderer.render(camera.getImages());
+
+        if (cv::waitKey(30) >= 0) break;
+    }
 }

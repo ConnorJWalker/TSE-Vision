@@ -9,7 +9,10 @@ Renderer::~Renderer() {
 }
 
 void Renderer::render(Images images) {
-    if (shouldRender) {
-        cv::imshow("Original", images.original);
-    }
+    if (!shouldRender) return;
+
+    cv::imshow("Original", images.original);
+    cv::imshow("Greyscale", images.greyscale);
+    cv::imshow("Canny", images.canny);
+    cv::imshow("HSV", images.hsv);
 }
