@@ -3,6 +3,7 @@
 
 #include "vision/camera.h"
 #include "vision/detector.h"
+#include "debugTools/renderer.h"
 
 class Application {
 public:
@@ -29,4 +30,5 @@ private:
 
     Camera camera;
     Detector detector;
+    Renderer renderer;
 };

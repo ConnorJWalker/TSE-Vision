@@ -27,7 +27,7 @@ find_package(OpenCV REQUIRED PATHS ${FIND_OPENCV_DIR} NO_DEFAULT_PATH)
 include_directories(OpenCV_INCLUDE_DIRS)
 include_directories(AFTER dependencies)
 
-add_executable(vision src/main.cpp src/application.cpp src/application.h src/vision/camera.cpp src/vision/camera.h src/vision/detector.cpp src/vision/detector.h)
+add_executable(vision src/main.cpp src/application.cpp src/application.h src/vision/camera.cpp src/vision/camera.h src/vision/detector.cpp src/vision/detector.h src/debugTools/renderer.cpp src/debugTools/renderer.h)
 
 target_link_libraries(vision ${OpenCV_LIBS})
 

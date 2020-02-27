@@ -1,6 +1,6 @@
 #include "application.h"
 
-Application::Application(std::string outputFilepath, bool shouldRender) {
+Application::Application(std::string outputFilepath, bool shouldRender) : renderer(shouldRender) {
     output.open(outputFilepath);
 }
 
@@ -11,5 +11,3 @@ Application::~Application() {
 void Application::run() {
 
 }
-
-
