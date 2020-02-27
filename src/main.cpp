@@ -2,6 +2,8 @@
 #include <cstring>
 #include <iostream>
 
+#include "application.h"
+
 /*
  * Start our application by passing in the output filepath for card data and a flag
  * for if we should render to screen. These will be stored in argv array as such:
@@ -30,7 +32,8 @@ int main(int argc, char** argv) {
         std::cout << "More than 2 arguments have been entered, extra arguments have been ignored" << std::endl;
     }
 
-    std::cout << "Filepath: " << outputFilepath << " Should Render: " << (shouldRender ? "true" : "false") << std::endl;
+    Application app(outputFilepath, shouldRender);
+    app.run();
 
     return 0;
 }

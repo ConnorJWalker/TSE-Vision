@@ -124,7 +124,25 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/connor/Documents/Programming/CPP/Github/TSE-Vision/src/application.cpp">
+			<Option target="vision"/>
+		</Unit>
+		<Unit filename="/home/connor/Documents/Programming/CPP/Github/TSE-Vision/src/application.h">
+			<Option target="vision"/>
+		</Unit>
 		<Unit filename="/home/connor/Documents/Programming/CPP/Github/TSE-Vision/src/main.cpp">
+			<Option target="vision"/>
+		</Unit>
+		<Unit filename="/home/connor/Documents/Programming/CPP/Github/TSE-Vision/src/vision/camera.cpp">
+			<Option target="vision"/>
+		</Unit>
+		<Unit filename="/home/connor/Documents/Programming/CPP/Github/TSE-Vision/src/vision/camera.h">
+			<Option target="vision"/>
+		</Unit>
+		<Unit filename="/home/connor/Documents/Programming/CPP/Github/TSE-Vision/src/vision/detector.cpp">
+			<Option target="vision"/>
+		</Unit>
+		<Unit filename="/home/connor/Documents/Programming/CPP/Github/TSE-Vision/src/vision/detector.h">
 			<Option target="vision"/>
 		</Unit>
 		<Unit filename="/home/connor/Documents/Programming/CPP/Github/TSE-Vision/CMakeLists.txt">
