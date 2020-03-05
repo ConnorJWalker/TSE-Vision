@@ -15,6 +15,7 @@ void Renderer::render(Images images) {
 
     // Grid renderer must be called after card outline renderer to make sure it isn't drawn over
     renderGrid(images.original);
+    renderCoordinates(images.original);
 
     cv::imshow("Original", images.original);
     cv::imshow("Greyscale", images.greyscale);
@@ -33,5 +34,28 @@ void Renderer::renderGrid(cv::Mat image) {
     for (size_t i = 1; i < gridHeight; i++) {
         float y = i * image.rows / gridHeight;
         cv::line(image, cv::Point2f(0, y), cv::Point2f(image.cols, y), cv::Scalar(255, 255, 0));
+    }
+}
+
+void Renderer::renderCoordinates(cv::Mat image) {
+    int gridWidthPixels = image.cols / gridWidth;
+    int gridHeightPixels = image.rows / gridHeight;
+
+    for (size_t y = 0; y < gridHeight; y++) {
+        for (size_t x = 0; x < gridWidth; x++) {
+            std::string coordinate = std::to_string(x) + "," + std::to_string(y);
+            cv::Size textSize = cv::getTextSize(coordinate, cv::FONT_HERSHEY_SIMPLEX, 0.65, 1, 0);
+            cv::putText(
+                image,
+                coordinate,
+                cv::Point(
+                    x * gridWidthPixels + gridWidthPixels / 2 - textSize.width / 2,
+                    y * gridHeightPixels + 25
+                ),
+                cv::FONT_HERSHEY_SIMPLEX,
+                0.65,
+                cv::Scalar(255, 255, 0)
+            );
+        }
     }
 }

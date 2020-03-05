@@ -12,6 +12,7 @@ public:
     void render(Images images);
 private:
     void renderGrid(cv::Mat image);
+    void renderCoordinates(cv::Mat image);
 
     bool shouldRender;
     unsigned int gridWidth, gridHeight;
