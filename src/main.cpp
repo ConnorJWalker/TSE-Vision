@@ -38,8 +38,13 @@ int main(int argc, char** argv) {
         }
     }
 
-    Application app(outputFilepath, shouldRender);
-    app.run();
+    if (widthGiven && heightGiven) {
+        Application app(outputFilepath, shouldRender, gridWidth, gridHeight);
+        app.run();
+    } else {
+        Application app(outputFilepath, shouldRender);
+        app.run();
+    }
 
     return 0;
 }

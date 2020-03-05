@@ -1,6 +1,10 @@
 #include "application.h"
 
-Application::Application(std::string outputFilepath, bool shouldRender) : renderer(shouldRender) {
+Application::Application(std::string outputFilepath, bool shouldRender, unsigned int gridWidth, unsigned int gridHeight) :
+    renderer(gridWidth, gridHeight, shouldRender)
+{
+    this->gridWidth = gridWidth;
+    this->gridHeight = gridHeight;
     output.open(outputFilepath);
 }
 

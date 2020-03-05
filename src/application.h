@@ -16,7 +16,7 @@ public:
      *
      * @todo implement and add camera, detector and render classes
      */
-    Application(std::string outputFilepath, bool shouldRender);
+    Application(std::string outputFilepath, bool shouldRender, unsigned int gridWidth = 5, unsigned int gridHeight = 5);
     ~Application();
 
     /*!
@@ -31,4 +31,6 @@ private:
     Camera camera;
     Detector detector;
     Renderer renderer;
+
+    unsigned int gridWidth, gridHeight;
 };
