@@ -5,12 +5,8 @@
 #include "application.h"
 
 /*
- * Start our application by passing in the output filepath for card data and a flag
- * for if we should render to screen. These will be stored in argv array as such:
- *
- * argv[0] - Application name
- * argv[1] - Filepath to detected card output file
- * argv[2] - Should render to screen for debug (optional, default to false)
+ * Start our application by passing in the output filepath for card data, card grid width,
+ * card grid height and a flag for if we should render to screen. These passed in argv
  */
 int main(int argc, char** argv) {
     if (argc == 1) {
@@ -20,16 +16,26 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    std::string outputFilepath = argv[1];
+    std::string outputFilepath;
+    bool shouldRender = false, heightGiven = false, widthGiven = false;
+    unsigned int gridWidth, gridHeight;
 
-    bool shouldRender = false;
-    if (argc == 3) {
-        if (std::strcmp("-r", argv[2]) == 0) {
+    // begin loop at 1 as index 0 will always be the executable name
+    for (size_t i = 1; i < argc; i++) {
+        if (std::strcmp("-r", argv[i]) == 0 || std::strcmp("-render", argv[i]) == 0) {
             shouldRender = true;
         }
-    }
-    else if (argc > 3) {
-        std::cout << "More than 2 arguments have been entered, extra arguments have been ignored" << std::endl;
+        else if (std::strcmp("-o", argv[i]) == 0) {
+            outputFilepath = argv[++i];
+        }
+        else if (std::strcmp("-w", argv[i]) == 0) {
+            widthGiven = true;
+            gridWidth = std::stoul(argv[++i]);
+        }
+        else if (std::strcmp("-h", argv[i]) == 0) {
+            heightGiven = true;
+            gridHeight = std::stoul(argv[++i]);
+        }
     }
 
     Application app(outputFilepath, shouldRender);
