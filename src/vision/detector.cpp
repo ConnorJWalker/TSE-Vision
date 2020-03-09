@@ -54,11 +54,45 @@ bool Detector::isCardValid(cv::Rect card, std::vector<DetectedCard> detectedCard
 }
 
 void Detector::addCardData(Images images, cv::Rect roi) {
-
+cv::Point2f coordiantes(
+		roi.tl().x + (roi.width / 2),
+		roi.br().y - (roi.height / 2)
+	);
+	if (detectIfFaceUp(images.greyscale, roi)) {
+		detectColour(images.hsv, roi);
+		detectCardValue(images.original, roi);
+	}
 }
 
-void Detector::detectIfFaceUp(cv::Mat image, cv::Rect roi) {
+bool Detector::detectIfFaceUp(cv::Mat greyImage, cv::Rect roi) {
+	cv::Mat Roi(greyImage, roi);
+	double whitePrecentage, notWhitePercentage;
+	std::vector<int> lowerWhite = { 200, 200, 200 };
+	std::vector<int> upperWhite = { 255, 255, 255 };
+	std::vector<int> lowerNotWhite = { 0, 0, 0 };
+	std::vector<int> upperNotWhite = { 128, 128, 128 };
+	auto colourDetection = [](double& percentage, cv::Mat roi, std::vector<int>upperBound, std::vector<int>lowerBound) {
+		cv::Mat mask;
+		cv::inRange(roi, lowerBound, upperBound, mask);
 
+		int imageSize = mask.rows * mask.cols;
+		cv::threshold(mask, mask, 120, -1, cv::THRESH_TOZERO);
+
+		percentage = 1 - (imageSize - cv::countNonZero(mask)) / (double)imageSize;
+	};
+
+	colourDetection(whitePrecentage, Roi, lowerWhite, upperWhite);
+
+
+	colourDetection(notWhitePercentage, Roi, lowerNotWhite, upperNotWhite);
+
+	if (whitePrecentage > notWhitePercentage) {
+		
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 void Detector::detectColour(cv::Mat hsvImage, cv::Rect roi) {
