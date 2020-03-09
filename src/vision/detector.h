@@ -22,9 +22,9 @@ public:
     std::vector<DetectedCard> detectCards(Images images);
 
 private:
-	DetectedCard addCardData(Images images, cv::Rect roi);
+ 	DetectedCard addCardData(Images images, cv::Rect roi);
 	bool isCardValid(cv::Rect card, std::vector<DetectedCard> detectedCards);
-    void detectIfFaceUp(cv::Mat image, cv::Rect roi);
+  bool detectIfFaceUp(cv::Mat image, cv::Rect roi);
     void detectColour(cv::Mat hsvImage, cv::Rect roi);
     void detectCardValue(cv::Mat image, cv::Rect roi);
 	std::vector<DetectedCard> detectedCards;
