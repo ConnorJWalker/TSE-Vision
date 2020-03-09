@@ -1,7 +1,56 @@
 #include "detector.h"
 
 std::vector<DetectedCard> Detector::detectCards(Images images) {
-    return std::vector<DetectedCard>();
+
+	std::vector<std::vector<cv::Point>> contours;
+	cv::findContours(images.canny, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+
+	// For each detected contour, create a rectangle object in its location and add it to the
+	// detected card vector to be returned to renderer. 
+
+	for (auto contour : contours) {
+		std::vector<cv::Point> contoursPoly;
+		cv::approxPolyDP(contour, contoursPoly, 3, true);
+
+		cv::Rect card = cv::boundingRect(contoursPoly);
+
+		if (isCardValid(card, detectedCards)) {
+			detectedCards.push_back(addCardData(images, card));
+		}
+	}
+	return std::vector<DetectedCard>();
+}
+
+bool Detector::isCardValid(cv::Rect card, std::vector<DetectedCard> detectedCards) {
+	// Make sure the "card" is a reasonable width and height to avoid
+	// noise being detected
+	if (card.width < 100 && card.height < 200) return false;
+
+	// Make sure that the card is at least 10px away from the last to prevent cards being counted
+	// multiple times
+	if (detectedCards.size() >= 1) {
+		int previous = detectedCards.size() - 1;
+		int distanceX = abs(card.tl().x - detectedCards[previous].cardRectangle.tl().x);
+		int distanceY = abs(card.tl().y - detectedCards[previous].cardRectangle.tl().y);
+
+		if (distanceX < 50 && distanceY < 50) {
+			return false;
+		}
+
+		// Make sure that the new card is not inside the previous card
+		cv::Rect previousCard = detectedCards[previous].cardRectangle;
+		int previousWidth = previousCard.width;
+		int previousHeight = previousCard.height;
+
+		bool isXInside = card.tl().x > previousCard.tl().x&&
+			card.tl().x < previousCard.tl().x + previousWidth;
+		bool isYInside = card.br().y < previousCard.br().y &&
+			card.br().y > previousCard.br().y - previousHeight;
+
+		return !(isXInside && isYInside);
+	}
+
+	return true;
 }
 
 void Detector::addCardData(Images images, cv::Rect roi) {
