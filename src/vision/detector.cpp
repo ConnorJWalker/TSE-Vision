@@ -1,7 +1,7 @@
 #include "detector.h"
 
 std::vector<DetectedCard> Detector::detectCards(Images images) {
-
+	detectedCards.clear();
 	std::vector<std::vector<cv::Point>> contours;
 	cv::findContours(images.canny, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
@@ -18,7 +18,7 @@ std::vector<DetectedCard> Detector::detectCards(Images images) {
 			detectedCards.push_back(addCardData(images, card));
 		}
 	}
-	return std::vector<DetectedCard>();
+	return detectedCards;
 }
 
 bool Detector::isCardValid(cv::Rect card, std::vector<DetectedCard> detectedCards) {
