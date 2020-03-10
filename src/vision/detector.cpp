@@ -53,15 +53,20 @@ bool Detector::isCardValid(cv::Rect card, std::vector<DetectedCard> detectedCard
 	return true;
 }
 
-void Detector::addCardData(Images images, cv::Rect roi) {
-cv::Point2f coordiantes(
-		roi.tl().x + (roi.width / 2),
-		roi.br().y - (roi.height / 2)
-	);
-	if (detectIfFaceUp(images.greyscale, roi)) {
-		detectColour(images.hsv, roi);
-		detectCardValue(images.original, roi);
-	}
+DetectedCard Detector::addCardData(Images images, cv::Rect roi) {
+	bool isFaceUp = detectIfFaceUp(images.greyscale, roi);
+	
+	return {
+		cv::Point2f(
+			roi.tl().x + (roi.width / 2),
+			roi.br().y - (roi.height / 2)
+		),
+		roi,
+		isFaceUp ? detectColour(images.hsv, roi) : Colour::Unknown,
+		isFaceUp,
+		false, // TODO,
+		isFaceUp ? detectCardValue(images.hsv, roi) : -1
+	};
 }
 
 bool Detector::detectIfFaceUp(cv::Mat greyImage, cv::Rect roi) {
@@ -95,7 +100,7 @@ bool Detector::detectIfFaceUp(cv::Mat greyImage, cv::Rect roi) {
 	}
 }
 
-void Detector::detectColour(cv::Mat hsvImage, cv::Rect roi) {
+Colour Detector::detectColour(cv::Mat hsvImage, cv::Rect roi) {
     cv::Mat Roi(hsvImage, roi);
 	double redPrecentage, blackPercentage;
 	std::vector<int> lowerRed = { 0, 120, 70 };
@@ -119,12 +124,12 @@ void Detector::detectColour(cv::Mat hsvImage, cv::Rect roi) {
 
 	if (redPrecentage > blackPercentage) {
 		
-		Colour::Red;
+		return Colour::Red;
 	}
 		
-	Colour::Black;
+	return Colour::Black;
 }
 
-void Detector::detectCardValue(cv::Mat image, cv::Rect roi) {
-
+int Detector::detectCardValue(cv::Mat image, cv::Rect roi) {
+	return -1;
 }
