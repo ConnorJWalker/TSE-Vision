@@ -16,7 +16,8 @@ void Application::run() {
     while (true) {
         camera.getNextFrame();
 
-        renderer.render(camera.getImages());
+        auto cards = detector.detectCards(camera.getImages());
+        renderer.render(camera.getImages(), cards);
 
         if (cv::waitKey(30) >= 0) break;
     }
