@@ -10,9 +10,12 @@ Renderer::~Renderer() {
     cv::destroyAllWindows();
 }
 
-void Renderer::render(Images images) {
-    if (!shouldRender) return;
 
+void Renderer::render(Images images, std::vector<DetectedCard>cards) {
+    if (!shouldRender) return;
+    for (auto card : cards) {
+        cv::rectangle(images.original, card.cardRectangle, cv::Scalar(0, 0, 255));
+    }
     // Grid renderer must be called after card outline renderer to make sure it isn't drawn over
     renderGrid(images.original);
     renderCoordinates(images.original);
@@ -59,3 +62,4 @@ void Renderer::renderCoordinates(cv::Mat image) {
         }
     }
 }
+
