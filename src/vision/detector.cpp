@@ -54,7 +54,7 @@ bool Detector::isCardValid(cv::Rect card, std::vector<DetectedCard> detectedCard
 }
 
 DetectedCard Detector::addCardData(Images images, cv::Rect roi) {
-	bool isFaceUp = detectIfFaceUp(images.greyscale, roi);
+	bool isFaceUp = detectIfFaceUp(images.hsv, roi);
 	
 	return {
 		cv::Point2f(
@@ -69,8 +69,8 @@ DetectedCard Detector::addCardData(Images images, cv::Rect roi) {
 	};
 }
 
-bool Detector::detectIfFaceUp(cv::Mat greyImage, cv::Rect roi) {
-	cv::Mat Roi(greyImage, roi);
+bool Detector::detectIfFaceUp(cv::Mat hsvImage, cv::Rect roi) {
+	cv::Mat Roi(hsvImage, roi);
 	double whitePrecentage, notWhitePercentage;
 	std::vector<int> lowerWhite = { 200, 200, 200 };
 	std::vector<int> upperWhite = { 255, 255, 255 };
@@ -87,7 +87,6 @@ bool Detector::detectIfFaceUp(cv::Mat greyImage, cv::Rect roi) {
 	};
 
 	colourDetection(whitePrecentage, Roi, lowerWhite, upperWhite);
-
 
 	colourDetection(notWhitePercentage, Roi, lowerNotWhite, upperNotWhite);
 
