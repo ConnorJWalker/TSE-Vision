@@ -19,14 +19,16 @@ struct DetectedCard {
 
 class Detector {
 public:
-    std::vector<DetectedCard> detectCards(Images images);
+    std::vector<DetectedCard> detectCards(const Images& images);
 
 private:
- 	DetectedCard addCardData(Images images, cv::Rect roi);
-	bool isCardValid(cv::Rect card, std::vector<DetectedCard> detectedCards);
-    bool detectIfFaceUp(cv::Mat image, cv::Rect roi);
-    Colour detectColour(cv::Mat hsvImage, cv::Rect roi);
-    int detectCardValue(cv::Mat image, cv::Rect roi);
+ 	static DetectedCard addCardData(const Images& images, cv::Rect roi);
+	static bool isCardValid(const cv::Rect& card, std::vector<DetectedCard> detectedCards);
+    static bool detectIfFaceUp(const cv::Mat& image, cv::Rect roi);
+    static Colour detectColour(const cv::Mat& hsvImage, cv::Rect roi);
+    static int detectCardValue(const cv::Mat& image, cv::Rect roi);
+
+    static double getColourPercentage(const cv::Mat& roi, const std::vector<int>& upperBound, const std::vector<int>& lowerBound);
 
 	std::vector<DetectedCard> detectedCards;
 

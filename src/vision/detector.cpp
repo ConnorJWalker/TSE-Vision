@@ -1,6 +1,6 @@
 #include "detector.h"
 
-std::vector<DetectedCard> Detector::detectCards(Images images) {
+std::vector<DetectedCard> Detector::detectCards(const Images& images) {
 	detectedCards.clear();
 	std::vector<std::vector<cv::Point>> contours;
 	cv::findContours(images.canny, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
@@ -8,7 +8,7 @@ std::vector<DetectedCard> Detector::detectCards(Images images) {
 	// For each detected contour, create a rectangle object in its location and add it to the
 	// detected card vector to be returned to renderer. 
 
-	for (auto contour : contours) {
+	for (const auto& contour : contours) {
 		std::vector<cv::Point> contoursPoly;
 		cv::approxPolyDP(contour, contoursPoly, 3, true);
 
@@ -21,7 +21,7 @@ std::vector<DetectedCard> Detector::detectCards(Images images) {
 	return detectedCards;
 }
 
-bool Detector::isCardValid(cv::Rect card, std::vector<DetectedCard> detectedCards) {
+bool Detector::isCardValid(const cv::Rect& card, std::vector<DetectedCard> detectedCards) {
 	// Make sure the "card" is a reasonable width and height to avoid
 	// noise being detected
 	if (card.width < 100 && card.height < 200) return false;
@@ -53,7 +53,7 @@ bool Detector::isCardValid(cv::Rect card, std::vector<DetectedCard> detectedCard
 	return true;
 }
 
-DetectedCard Detector::addCardData(Images images, cv::Rect roi) {
+DetectedCard Detector::addCardData(const Images& images, cv::Rect roi) {
 	bool isFaceUp = detectIfFaceUp(images.hsv, roi);
 	
 	return {
@@ -69,29 +69,17 @@ DetectedCard Detector::addCardData(Images images, cv::Rect roi) {
 	};
 }
 
-bool Detector::detectIfFaceUp(cv::Mat hsvImage, cv::Rect roi) {
+bool Detector::detectIfFaceUp(const cv::Mat& hsvImage, cv::Rect roi) {
 	cv::Mat Roi(hsvImage, roi);
-	double whitePrecentage, notWhitePercentage;
 	std::vector<int> lowerWhite = { 200, 200, 200 };
 	std::vector<int> upperWhite = { 255, 255, 255 };
 	std::vector<int> lowerNotWhite = { 0, 0, 0 };
 	std::vector<int> upperNotWhite = { 128, 128, 128 };
-	auto colourDetection = [](double& percentage, cv::Mat roi, std::vector<int>upperBound, std::vector<int>lowerBound) {
-		cv::Mat mask;
-		cv::inRange(roi, lowerBound, upperBound, mask);
 
-		int imageSize = mask.rows * mask.cols;
-		cv::threshold(mask, mask, 120, -1, cv::THRESH_TOZERO);
+	double whitePercentage = getColourPercentage(Roi, lowerWhite, upperWhite);
+    double notWhitePercentage = getColourPercentage(Roi, lowerNotWhite, upperNotWhite);
 
-		percentage = 1 - (imageSize - cv::countNonZero(mask)) / (double)imageSize;
-	};
-
-	colourDetection(whitePrecentage, Roi, lowerWhite, upperWhite);
-
-	colourDetection(notWhitePercentage, Roi, lowerNotWhite, upperNotWhite);
-
-	if (whitePrecentage > notWhitePercentage) {
-		
+	if (whitePercentage > notWhitePercentage) {
 		return true;
 	}
 	else {
@@ -99,36 +87,33 @@ bool Detector::detectIfFaceUp(cv::Mat hsvImage, cv::Rect roi) {
 	}
 }
 
-Colour Detector::detectColour(cv::Mat hsvImage, cv::Rect roi) {
+Colour Detector::detectColour(const cv::Mat& hsvImage, cv::Rect roi) {
     cv::Mat Roi(hsvImage, roi);
-	double redPrecentage, blackPercentage;
 	std::vector<int> lowerRed = { 0, 120, 70 };
 	std::vector<int> upperRed = { 10, 255, 255 };
 	std::vector<int> lowerBlack = { 0, 0, 0 };
 	std::vector<int> upperBlack = { 180, 255, 125 };
-	auto colourDetection = [](double& percentage, cv::Mat roi, std::vector<int>upperBound, std::vector<int>lowerBound) {
-		cv::Mat mask;
-		cv::inRange(roi, lowerBound, upperBound, mask);
-
-		int imageSize = mask.rows * mask.cols;
-		cv::threshold(mask, mask, 120, -1, cv::THRESH_TOZERO);
-
-		percentage = 1 - (imageSize - cv::countNonZero(mask)) / (double)imageSize;
-	};
 	
-	colourDetection(redPrecentage, Roi, upperRed, lowerRed);
+	double redPercentage = getColourPercentage(Roi, upperRed, lowerRed);
+	double blackPercentage = getColourPercentage(Roi, upperBlack, lowerBlack);
 
-	
-	colourDetection(blackPercentage, Roi, upperBlack, lowerBlack);
-
-	if (redPrecentage > blackPercentage) {
-		
+	if (redPercentage > blackPercentage) {
 		return Colour::Red;
 	}
 		
 	return Colour::Black;
 }
 
-int Detector::detectCardValue(cv::Mat image, cv::Rect roi) {
+int Detector::detectCardValue(const cv::Mat& image, cv::Rect roi) {
 	return -1;
+}
+
+double Detector::getColourPercentage(const cv::Mat &roi, const std::vector<int> &upperBound, const std::vector<int> &lowerBound) {
+    cv::Mat mask;
+    cv::inRange(roi, lowerBound, upperBound, mask);
+
+    int imageSize = mask.rows * mask.cols;
+    cv::threshold(mask, mask, 120, -1, cv::THRESH_TOZERO);
+
+    return 1 - (imageSize - cv::countNonZero(mask)) / (double)imageSize;
 }
