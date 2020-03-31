@@ -16,7 +16,7 @@ void Application::run() {
     while (true) {
         camera.getNextFrame();
 
-        auto cards = detector.detectCards(camera.getImages());
+        auto cards = detector.detectCards(camera.getImages(), gridWidth, gridHeight);
         renderer.render(camera.getImages(), cards);
         writeToFile(cards);
 
@@ -34,11 +34,12 @@ void Application::writeToFile(std::vector<DetectedCard> cards) {
 
     for (auto card : cards) {
         if (card.colour == Colour::Unknown) {
-            output << "Unknown\n";
+            output << "Unknown," << "A," << card.coordinates.x << "," << card.coordinates.y << "\n";
             continue;
         }
 
-        output << (card.colour == Colour::Black ? "Black" : "Red" ) << "\n";
+        std::string colour = card.colour == Colour::Black ? "Black" : "Red";
+        output << colour << "," << "A," << card.coordinates.x << "," << card.coordinates.y << "\n";
     }
 
     output.close();

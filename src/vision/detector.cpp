@@ -1,6 +1,6 @@
 #include "detector.h"
 
-std::vector<DetectedCard> Detector::detectCards(const Images& images) {
+std::vector<DetectedCard> Detector::detectCards(const Images& images, int gridWidth, int gridHeight) {
 	detectedCards.clear();
 	std::vector<std::vector<cv::Point>> contours;
 	cv::findContours(images.canny, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
@@ -15,7 +15,7 @@ std::vector<DetectedCard> Detector::detectCards(const Images& images) {
 		cv::Rect card = cv::boundingRect(contoursPoly);
 
 		if (isCardValid(card, detectedCards)) {
-			detectedCards.push_back(addCardData(images, card));
+			detectedCards.push_back(addCardData(images, card, gridWidth, gridHeight));
 		}
 	}
 	return detectedCards;
@@ -53,7 +53,7 @@ bool Detector::isCardValid(const cv::Rect& card, std::vector<DetectedCard> detec
 	return true;
 }
 
-DetectedCard Detector::addCardData(const Images& images, cv::Rect roi) {
+DetectedCard Detector::addCardData(const Images& images, cv::Rect roi, int gridWidth, int gridHeight) {
 	Colour cardColour = detectColour(images.hsv, roi);
 	bool isFaceUp = cardColour != Colour::Unknown;
 
@@ -61,8 +61,8 @@ DetectedCard Detector::addCardData(const Images& images, cv::Rect roi) {
 
 	return {
 		cv::Point2f(
-			roi.tl().x + (roi.width / 2),
-			roi.br().y - (roi.height / 2)
+			(roi.tl().x + (roi.width / 2)) / (images.original.cols / gridWidth),
+			(roi.br().y - (roi.height / 2)) / (images.original.rows / gridHeight)
 		),
 		roi,
 		cardColour,
@@ -81,7 +81,9 @@ Colour Detector::detectColour(const cv::Mat& hsvImage, cv::Rect roi) {
 	
 	double redPercentage = getColourPercentage(Roi, upperRed, lowerRed);
 	double blackPercentage = getColourPercentage(Roi, upperBlack, lowerBlack);
-	if(redPercentage < 0.05 && blackPercentage < 0.05){
+
+	double threshold = 0.03;
+	if(redPercentage < threshold && blackPercentage < threshold){
 		return Colour::Unknown;
 	}
 	else if (redPercentage > blackPercentage) {
