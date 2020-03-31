@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <fstream>
 
 #include "vision/camera.h"
@@ -26,11 +27,13 @@ public:
      */
     void run();
 private:
-    std::fstream output;
+    std::ofstream output;
 
     Camera camera;
     Detector detector;
     Renderer renderer;
-
+    std::string outputFilePath;
     unsigned int gridWidth, gridHeight;
+
+    void writeToFile(std::vector<DetectedCard> cards);
 };
