@@ -24,7 +24,6 @@ public:
 private:
  	static DetectedCard addCardData(const Images& images, cv::Rect roi);
 	static bool isCardValid(const cv::Rect& card, std::vector<DetectedCard> detectedCards);
-    static bool detectIfFaceUp(const cv::Mat& image, cv::Rect roi);
     static Colour detectColour(const cv::Mat& hsvImage, cv::Rect roi);
     static int detectCardValue(const cv::Mat& image, cv::Rect roi);
 
