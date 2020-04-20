@@ -10,7 +10,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Find OpenCV package
 set(FIND_OPENCV_DIR
-    ../../Libraries/opencv/build
+    ../../../Libraries/opencv/build
     ${OPENCV_DIR}
     $ENV{OPENCV_DIR}/lib)
 
@@ -27,8 +27,8 @@ find_package(OpenCV REQUIRED PATHS ${FIND_OPENCV_DIR} NO_DEFAULT_PATH)
 include_directories(OpenCV_INCLUDE_DIRS)
 include_directories(AFTER dependencies)
 
-add_executable(vision src/main.cpp src/application.cpp src/application.h src/vision/camera.cpp src/vision/camera.h src/vision/detector.cpp src/vision/detector.h src/debugTools/renderer.cpp src/debugTools/renderer.h)
+add_executable(vision src/main.cpp src/application.cpp src/application.h src/vision/camera.cpp src/vision/camera.h src/vision/detector.cpp src/vision/detector.h src/debugTools/renderer.cpp src/debugTools/renderer.h src/vision/ocr.cpp src/vision/ocr.h)
 
-target_link_libraries(vision ${OpenCV_LIBS})
+target_link_libraries(vision ${OpenCV_LIBS} tesseract)
 
 unset(COMPILE_STATIC)
