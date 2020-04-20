@@ -9,7 +9,7 @@ public:
     Ocr();
     ~Ocr();
 
-    char run(cv::Mat hsv, cv::Rect roi);
+    char detectCardValue(cv::Mat hsv, cv::Rect roi);
 
 private:
     tesseract::TessBaseAPI* ocr;
@@ -17,4 +17,5 @@ private:
 
     double getBlackPercentage(cv::Mat numberRoi);
     void getColourMasks(cv::Mat hsv, cv::Rect roi);
+    std::vector<cv::Rect> findValueLocations();
 };
