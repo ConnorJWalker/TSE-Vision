@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <opencv.h>
 #include <tesseract/baseapi.h>
 #include "detector.h"
@@ -8,12 +9,12 @@ public:
     Ocr();
     ~Ocr();
 
-    DetectedCard run(cv::Mat roi, DetectedCard card);
+    char run(cv::Mat hsv, cv::Rect roi);
 
 private:
     tesseract::TessBaseAPI* ocr;
     cv::Mat currentMask, currentMaskInverted;
 
     double getBlackPercentage(cv::Mat numberRoi);
-    void getColourMasks(cv::Mat roi);
+    void getColourMasks(cv::Mat hsv, cv::Rect roi);
 };

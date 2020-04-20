@@ -16,14 +16,23 @@ Ocr::~Ocr() {
     delete ocr;
 }
 
-DetectedCard Ocr::run(cv::Mat roi, DetectedCard card) {
-    return DetectedCard();
+char Ocr::run(cv::Mat hsv, cv::Rect roi) {
+
 }
 
 double Ocr::getBlackPercentage(cv::Mat numberRoi) {
-    return 0;
+    int imageSize = numberRoi.rows * numberRoi.cols;
+    return (imageSize - cv::countNonZero(numberRoi)) / (double)imageSize;
 }
 
-void Ocr::getColourMasks(cv::Mat roi) {
+void Ocr::getColourMasks(cv::Mat hsv, cv::Rect roi) {
+    if (Detector::detectColour(hsv, roi) == Colour::Black) {
+        cv::inRange(hsv, std::vector<int> {0, 120, 70}, std::vector<int> {10, 255, 255}, currentMask);
+        cv::threshold(currentMask, currentMask, 120, 255, cv::THRESH_TOZERO);
+    } else {
+        cv::inRange(hsv, std::vector<int> {0, 0, 0}, std::vector<int> {180, 255, 125}, currentMask);
+        cv::threshold(currentMask, currentMask, 120, 255, cv::THRESH_TOZERO);
+    }
 
+    cv::bitwise_not(currentMask, currentMaskInverted);
 }
