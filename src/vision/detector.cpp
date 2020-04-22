@@ -68,7 +68,7 @@ DetectedCard Detector::addCardData(const Images& images, cv::Rect roi, int gridW
 		cardColour,
 		isFaceUp,
 		false, // TODO,
-		isFaceUp ? detectCardValue(images.hsv, roi) : -1
+		isFaceUp ? ocr.detectCardValue(images, roi, cardColour) : 'Z'
 	};
 }
 

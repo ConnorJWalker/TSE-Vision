@@ -2,11 +2,9 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
 
+#include "ocr.h"
+#include "colour.h"
 #include "camera.h"
-
-enum class Colour {
-    Red, Black, Unknown
-};
 
 struct DetectedCard {
     cv::Point2f coordinates;
@@ -14,8 +12,10 @@ struct DetectedCard {
     Colour colour;
     bool isFaceUp;
     bool isKnown;
-    int value;
+    char value;
 };
+
+class Ocr;
 
 class Detector {
 public:
@@ -23,12 +23,12 @@ public:
     static Colour detectColour(const cv::Mat& hsvImage, cv::Rect roi);
 
 private:
- 	static DetectedCard addCardData(const Images& images, cv::Rect roi, int gridWidth, int gridHeight);
+ 	DetectedCard addCardData(const Images& images, cv::Rect roi, int gridWidth, int gridHeight);
 	static bool isCardValid(const cv::Rect& card, std::vector<DetectedCard> detectedCards);
     static int detectCardValue(const cv::Mat& image, cv::Rect roi);
 
     static double getColourPercentage(const cv::Mat& roi, const std::vector<int>& upperBound, const std::vector<int>& lowerBound);
 
 	std::vector<DetectedCard> detectedCards;
-
+    Ocr ocr;
 };

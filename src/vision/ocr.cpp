@@ -16,8 +16,20 @@ Ocr::~Ocr() {
     delete ocr;
 }
 
-char Ocr::detectCardValue(cv::Mat hsv, cv::Rect roi) {
+char Ocr::detectCardValue(const Images& images, cv::Rect originalRoi, Colour colour) {
+    getColourMasks(images.hsv, colour);
+    for (auto roi : findValueLocations()) {
+        cv::Mat valueLocation(currentMask, roi);
 
+        // Erode image
+        constexpr int erosionSize = 3, width = 2 * erosionSize + 1;
+        cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(width, width), cv::Point(erosionSize, erosionSize));
+        cv::erode(valueLocation, valueLocation, element);
+
+        ocr->SetImage(valueLocation.data, valueLocation.cols, valueLocation.rows, 3, valueLocation.step);
+        cv::rectangle(images.original, roi, cv::Scalar(255, 255, 0));
+        return std::string(ocr->GetUTF8Text()).c_str()[0];
+    }
 }
 
 double Ocr::getBlackPercentage(cv::Mat numberRoi) {
@@ -25,8 +37,8 @@ double Ocr::getBlackPercentage(cv::Mat numberRoi) {
     return (imageSize - cv::countNonZero(numberRoi)) / (double)imageSize;
 }
 
-void Ocr::getColourMasks(cv::Mat hsv, cv::Rect roi) {
-    if (Detector::detectColour(hsv, roi) == Colour::Black) {
+void Ocr::getColourMasks(cv::Mat hsv, Colour colour) {
+    if (colour == Colour::Black) {
         cv::inRange(hsv, std::vector<int> {0, 120, 70}, std::vector<int> {10, 255, 255}, currentMask);
         cv::threshold(currentMask, currentMask, 120, 255, cv::THRESH_TOZERO);
     } else {
@@ -43,6 +55,7 @@ std::vector<cv::Rect> Ocr::findValueLocations() {
 
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(cannyOutput, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
+    cv::imshow("REE", currentMask);
 
     std::vector<cv::Rect> rectangles;
     for (auto contour : contours) {
