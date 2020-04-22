@@ -57,8 +57,6 @@ DetectedCard Detector::addCardData(const Images& images, cv::Rect roi, int gridW
 	Colour cardColour = detectColour(images.hsv, roi);
 	bool isFaceUp = cardColour != Colour::Unknown;
 
-	std::cout << "Colour known: " << isFaceUp << " Colour: " << (cardColour == Colour::Black ? "Black" : "Red") << std::endl;
-
 	return {
 		cv::Point2f(
 			(roi.tl().x + (roi.width / 2)) / (images.original.cols / gridWidth),
