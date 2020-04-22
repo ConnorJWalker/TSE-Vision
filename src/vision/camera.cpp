@@ -1,6 +1,6 @@
 #include "camera.h"
 
-Camera::Camera() : camera(0) {
+Camera::Camera() : camera(2) {
 
 }
 

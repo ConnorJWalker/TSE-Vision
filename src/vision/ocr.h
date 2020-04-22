@@ -2,7 +2,7 @@
 #include <vector>
 #include <opencv.h>
 #include <tesseract/baseapi.h>
-
+#include <iostream>
 #include "camera.h"
 #include "colour.h"
 

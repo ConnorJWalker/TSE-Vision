@@ -17,7 +17,7 @@ Ocr::~Ocr() {
 }
 
 char Ocr::detectCardValue(const Images& images, cv::Rect originalRoi, Colour colour) {
-    getColourMasks(images.hsv, colour);
+    getColourMasks(cv::Mat(images.hsv, cv::Rect(originalRoi.tl().x, originalRoi.tl().y, originalRoi.width / 2, originalRoi.height / 2)), colour);
     for (auto roi : findValueLocations()) {
         cv::Mat valueLocation(currentMask, roi);
 
@@ -28,6 +28,7 @@ char Ocr::detectCardValue(const Images& images, cv::Rect originalRoi, Colour col
 
         ocr->SetImage(valueLocation.data, valueLocation.cols, valueLocation.rows, 3, valueLocation.step);
         cv::rectangle(images.original, roi, cv::Scalar(255, 255, 0));
+        std::cout << std::string(ocr->GetUTF8Text()).c_str()  << std::endl;
         return std::string(ocr->GetUTF8Text()).c_str()[0];
     }
 }
@@ -38,6 +39,8 @@ double Ocr::getBlackPercentage(cv::Mat numberRoi) {
 }
 
 void Ocr::getColourMasks(cv::Mat hsv, Colour colour) {
+    if (hsv.empty()) return;
+
     if (colour == Colour::Black) {
         cv::inRange(hsv, std::vector<int> {0, 120, 70}, std::vector<int> {10, 255, 255}, currentMask);
         cv::threshold(currentMask, currentMask, 120, 255, cv::THRESH_TOZERO);
@@ -60,7 +63,7 @@ std::vector<cv::Rect> Ocr::findValueLocations() {
     std::vector<cv::Rect> rectangles;
     for (auto contour : contours) {
         std::vector<cv::Point> contoursPoly;
-        cv::approxPolyDP(contoursPoly, contoursPoly, 3, true);
+        cv::approxPolyDP(contour, contoursPoly, 3, true);
 
         cv::Rect roi = cv::boundingRect(contoursPoly);
         double blackPercentage = getBlackPercentage(cv::Mat(currentMask, roi));
